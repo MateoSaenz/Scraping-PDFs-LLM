@@ -1,0 +1,11 @@
+pdfplumber
+pandas
+tqdm
+argostranslate
+langdetect
+geopandas
+fiona
+requests
+beautifulsoup4
+ollama
+openpyxl
