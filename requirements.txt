@@ -1,11 +1,12 @@
-pdfplumber
-pandas
-tqdm
-argostranslate
-langdetect
-geopandas
-fiona
-requests
-beautifulsoup4
-ollama
-openpyxl
+pandas==2.2.2
+geopandas==1.1.1
+fiona==1.10.1
+requests==2.32.3
+beautifulsoup4==4.12.2
+pdfplumber==0.11.9
+argostranslate==1.10.0
+langdetect==1.0.9
+ollama==0.1.26
+tqdm==4.66.5
+openpyxl==3.11.0  # For Excel export
+cloudscraper==1.2.71
