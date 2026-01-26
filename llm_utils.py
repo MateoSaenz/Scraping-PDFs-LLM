@@ -15,12 +15,12 @@ def extract_relevant_lines(text, max_lines=5000):
     NO regex pre-extraction - let LLM decide what's an asset.
     """
     print("\n" + "="*70)
-    print("📋 FUNCTION: extract_relevant_lines()")
+    print("FUNCTION: extract_relevant_lines()")
     print("="*70)
     
     lines = text.splitlines()
-    print(f"📊 Total lines in text: {len(lines)}")
-    print(f"📊 Text length: {len(text)} characters")
+    print(f"Total lines in text: {len(lines)}")
+    print(f"Text length: {len(text)} characters")
     
     relevant_indices = set()
     
@@ -30,8 +30,8 @@ def extract_relevant_lines(text, max_lines=5000):
         "compliance", "monitoring", "sampling", "standard", "requirement"
     ]
     
-    print(f"🚫 Exclude keywords: {len(EXCLUDE_KEYWORDS)} patterns")
-    print(f"🔍 Asset keywords to search: {len(config.ASSET_KEYWORDS)} patterns\n")
+    print(f"Exclude keywords: {len(EXCLUDE_KEYWORDS)} patterns")
+    print(f"Asset keywords to search: {len(config.ASSET_KEYWORDS)} patterns\n")
 
     excluded_count = 0
     matched_count = 0
@@ -58,13 +58,13 @@ def extract_relevant_lines(text, max_lines=5000):
                 keyword_matches[keyword] += 1
                 break  # Don't count same line twice
 
-    print(f"⏭️  Lines excluded (regulatory/noise): {excluded_count}")
-    print(f"✅ Lines matched with asset keywords: {matched_count}")
-    print(f"📦 Unique context lines extracted: {len(relevant_indices)}\n")
+    print(f"Lines excluded (regulatory/noise): {excluded_count}")
+    print(f"Lines matched with asset keywords: {matched_count}")
+    print(f"Unique context lines extracted: {len(relevant_indices)}\n")
     
     # Show top keywords found
     if keyword_matches:
-        print("🏆 Top 10 keywords found:")
+        print("Top 10 keywords found:")
         for kw, count in sorted(keyword_matches.items(), key=lambda x: x[1], reverse=True)[:10]:
             print(f"   • {kw:30s} → {count:3d} occurrences")
         print()
@@ -89,24 +89,24 @@ def extract_assets_from_text(text, debug=False):
     NO regex pre-extraction step.
     """
     print("\n" + "="*70)
-    print("🤖 FUNCTION: extract_assets_from_text()")
+    print("FUNCTION: extract_assets_from_text()")
     print("="*70)
-    print(f"⏱️  Timestamp: {__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    print(f"🔧 Debug mode: {debug}\n")
+    print(f"Timestamp: {__import__('datetime').datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print(f"Debug mode: {debug}\n")
     
     # Step 1: Filter relevant lines
-    print("STEP 1️⃣: Extracting relevant lines...")
+    print("STEP 1️: Extracting relevant lines...")
     relevant = extract_relevant_lines(text)
     
     if debug:
-        print(f"📝 Relevant text extracted: {len(relevant)} chars")
+        print(f"Relevant text extracted: {len(relevant)} chars")
     
     if not relevant.strip():
-        print("⚠️  No relevant lines found - returning empty assets")
+        print("No relevant lines found - returning empty assets")
         print("="*70 + "\n")
         return {"assets": []}
 
-    print("STEP 2️⃣: Preparing LLM prompt...")
+    print("STEP 2️: Preparing LLM prompt...")
     
     # Step 2: Direct LLM call with YOUR PROVEN PROMPT
     prompt = f"""You are a strict Industrial Energy Auditor. 
@@ -130,13 +130,13 @@ TEXT:
 {relevant}
 """
     
-    print(f"📋 Prompt length: {len(prompt)} characters")
-    print(f"📋 Prompt preview (first 200 chars):\n{prompt[:200]}...\n")
+    print(f"Prompt length: {len(prompt)} characters")
+    print(f"Prompt preview (first 200 chars):\n{prompt[:200]}...\n")
 
     try:
-        print("STEP 3️⃣: Sending request to Ollama LLM...")
-        print(f"🤖 Model: {config.OLLAMA_MODEL}")
-        print(f"📤 Input text length: {len(relevant)} chars")
+        print("STEP 3️: Sending request to Ollama LLM...")
+        print(f"Model: {config.OLLAMA_MODEL}")
+        print(f"Input text length: {len(relevant)} chars")
         
         import time
         start_time = time.time()
@@ -148,25 +148,25 @@ TEXT:
         )
         
         elapsed_time = time.time() - start_time
-        print(f"⏱️  LLM processing time: {elapsed_time:.2f} seconds")
+        print(f"⏱LLM processing time: {elapsed_time:.2f} seconds")
         
         raw_text = response["message"]["content"].strip()
         
-        print(f"\nSTEP 4️⃣: Processing LLM response...")
-        print(f"📊 Response length: {len(raw_text)} characters")
-        print(f"📊 Response preview (first 300 chars):\n{raw_text[:300]}\n")
+        print(f"\nSTEP 4️: Processing LLM response...")
+        print(f"Response length: {len(raw_text)} characters")
+        print(f"Response preview (first 300 chars):\n{raw_text[:300]}\n")
         
         # Handle empty response
         if not raw_text or raw_text == "{}":
-            print("⚠️  LLM returned empty response: '{}'")
+            print("LLM returned empty response: '{}'")
             print("="*70 + "\n")
             return {"assets": []}
         
         # Parse JSON
-        print("🔄 Parsing JSON response...")
+        print("Parsing JSON response...")
         data = json.loads(raw_text)
-        print(f"✅ JSON parsed successfully")
-        print(f"📊 Root type: {type(data).__name__}")
+        print(f"JSON parsed successfully")
+        print(f"Root type: {type(data).__name__}")
         
         # Normalize response format
         print("\nNormalizing response format...")
@@ -192,15 +192,15 @@ TEXT:
         
         # Validate: only keep items with asset_type
         print("\nValidating assets...")
-        print(f"📊 Total items to validate: {len(assets)}")
+        print(f"Total items to validate: {len(assets)}")
         
         invalid_count = 0
         for idx, a in enumerate(assets):
             if not isinstance(a, dict):
-                print(f"   ⚠️  Item {idx}: Not a dict (type: {type(a).__name__})")
+                print(f"Item {idx}: Not a dict (type: {type(a).__name__})")
                 invalid_count += 1
             elif not a.get("asset_type"):
-                print(f"   ⚠️  Item {idx}: Missing 'asset_type'")
+                print(f" Item {idx}: Missing 'asset_type'")
                 invalid_count += 1
         
         validated = [
@@ -208,8 +208,8 @@ TEXT:
             if isinstance(a, dict) and a.get("asset_type")
         ]
         
-        print(f"📊 Invalid items removed: {invalid_count}")
-        print(f"✅ Valid assets extracted: {len(validated)}")
+        print(f"Invalid items removed: {invalid_count}")
+        print(f"Valid assets extracted: {len(validated)}")
         
         if validated:
             print("\n🎯 Extracted Assets:")
@@ -224,13 +224,13 @@ TEXT:
         return {"assets": validated}
         
     except json.JSONDecodeError as e:
-        print(f"\n❌ JSON PARSING ERROR")
-        print(f"   Error: {e}")
+        print(f"\nJSON PARSING ERROR")
+        print(f" Error: {e}")
         print(f"   Raw response (first 500 chars):\n{raw_text[:500]}")
         print("="*70 + "\n")
         return {"assets": []}
     except Exception as e:
-        print(f"\n❌ UNEXPECTED ERROR")
+        print(f"\n UNEXPECTED ERROR")
         print(f"   Error type: {type(e).__name__}")
         print(f"   Error message: {e}")
         import traceback
@@ -245,7 +245,7 @@ TEXT:
 def debug_extract_relevant_lines(text):
     """DEBUG version with extra logging"""
     print("\n" + "="*70)
-    print("🐛 DEBUG FUNCTION: debug_extract_relevant_lines()")
+    print(" DEBUG FUNCTION: debug_extract_relevant_lines()")
     print("="*70 + "\n")
     
     lines = text.splitlines()
@@ -257,7 +257,7 @@ def debug_extract_relevant_lines(text):
         "compliance", "monitoring", "sampling", "standard", "requirement"
     ]
     
-    print(f"📊 Input Statistics:")
+    print(f" -> Input Statistics:")
     print(f"   - Total lines: {len(lines)}")
     print(f"   - Total characters: {len(text)}")
     print(f"   - Average line length: {len(text)//len(lines) if lines else 0} chars")
@@ -299,13 +299,13 @@ def debug_extract_relevant_lines(text):
     
     sorted_indices = sorted(list(relevant_indices))
     
-    print(f"📊 Processing Results:")
+    print(f"Processing Results:")
     print(f"   - Lines excluded (regulatory): {excluded_count}")
     print(f"   - Lines matched with keywords: {len(keyword_matches)}")
     print(f"   - Total relevant lines (with context): {len(sorted_indices)}\n")
     
     if keyword_matches:
-        print(f"🔍 Keywords Found (top 15):")
+        print(f"Keywords Found (top 15):")
         for kw, occurrences in sorted(keyword_matches.items(), key=lambda x: len(x[1]), reverse=True)[:15]:
             print(f"   • {kw:35s} → {len(occurrences):3d} occurrences")
             for line_num, preview in occurrences[:2]:  # Show first 2 occurrences
@@ -315,7 +315,7 @@ def debug_extract_relevant_lines(text):
     relevant = [f"[L.{idx+1:04d}] {lines[idx]}" for idx in sorted_indices]
     result = "\n".join(relevant[:5000])
     
-    print(f"📄 Output Statistics:")
+    print(f" Output Statistics:")
     print(f"   - Output length: {len(result)} characters")
     print(f"   - Output lines: {len(relevant)}")
     print(f"   - Compression ratio: {len(result)/len(text)*100:.1f}% of original")
