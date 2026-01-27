@@ -36,6 +36,10 @@ def main():
     gdf = gdf.head(2) 
     print(f"   ✅ TEST MODE: Processing {len(gdf)} sites\n")
     
+
+    # Initialize txt_link column
+    gdf["txt_link"] = None
+    
     # =====================================================
     # STEP 2: Scrape PDF Links
     # =====================================================

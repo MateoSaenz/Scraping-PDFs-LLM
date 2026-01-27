@@ -8,15 +8,15 @@ BASE_DIR = Path(r"C:\Users\m.saenzortiz\OneDrive - ENERGY POOL\Documents\PROJET 
 DATA_DIR = Path(r"C:\Users\m.saenzortiz\OneDrive - ENERGY POOL\Documents\PROJET Assets analysis BEL\Scraping-PDFs-LLM\data\raw")
 PDF_DIR = BASE_DIR / "PDFs"
 TXT_DIR = BASE_DIR / "TXT"
-JSON_DIR = BASE_DIR / "JSON"  
+JSON_DIR = BASE_DIR / "JSON"
+
 
 # --- FILES ---
 GPKG_FILE = DATA_DIR / "pf_gpbv.gpkg"
 FINAL_EXCEL = Path(r"C:\Users\m.saenzortiz\OneDrive - ENERGY POOL\Documents\PROJET Assets analysis BEL\Scraping-PDFs-LLM\data\final\gpbv_final_assets.xlsx")
 
-# --- CONFIG ---
-OLLAMA_MODEL = "llama3.1:8b"
-SHAREPOINT_BASE_URL = "local_storage://" 
+# --- SHAREPOINT/OUTPUT ---
+SHAREPOINT_BASE_URL = r"C:\Users\m.saenzortiz\OneDrive - ENERGY POOL\Documents\PROJET Assets analysis BEL\Data_stock\TXT/"
 
 # Ensure folders exist
 for folder in [PDF_DIR, TXT_DIR, JSON_DIR, DATA_DIR]:
