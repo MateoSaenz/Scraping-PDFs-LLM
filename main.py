@@ -39,7 +39,7 @@ def main():
 
     # Initialize txt_link column
     gdf["txt_link"] = None
-    
+
     # =====================================================
     # STEP 2: Scrape PDF Links
     # =====================================================
@@ -117,16 +117,16 @@ def main():
                     gdf.at[idx, "txt_link"] = txt_link
                     print(f"   ✅ Converted: {os.path.basename(txt_link)}")
             except Exception as e:
-                print(f"   ❌ Error: {e}")
+                print(f" Error: {e}")
     
-    print(f"\n   ✅ PDF→TXT complete\n")
+    print(f"\n  PDF→TXT complete\n")
     
     # =====================================================
     # STEP 5: TXT → LLM Asset Extraction (WITH CHECKPOINT)
     # =====================================================
-    print("🧠 Step 5: LLM Asset Extraction...")
-    print(f"   📁 Source: {config.TXT_DIR}")
-    print(f"   📁 Destination: {config.JSON_DIR}\n")
+    print(" Step 5: LLM Asset Extraction...")
+    print(f"    Source: {config.TXT_DIR}")
+    print(f"    Destination: {config.JSON_DIR}\n")
     
     llm_processed = 0
     llm_skipped = 0
