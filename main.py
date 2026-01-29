@@ -124,13 +124,13 @@ def main():
     # =====================================================
     # STEP 5: TXT → LLM Asset Extraction (WITH CHECKPOINT)
     # =====================================================
-    print(" Step 5: LLM Asset Extraction...")
-    print(f"    Source: {config.TXT_DIR}")
-    print(f"    Destination: {config.JSON_DIR}\n")
-    
+    print("🤖 Step 5: LLM Asset Extraction...")
+    print(f"   📁 Source: {config.TXT_DIR}")
+    print(f"   📁 Destination: {config.JSON_DIR}\n")
+
     llm_processed = 0
     llm_skipped = 0
-    
+
     for idx, row in tqdm(gdf.iterrows(), total=len(gdf), desc="   "):
         if pd.isna(row.get("txt_link")):
             continue
@@ -142,37 +142,44 @@ def main():
         
         # ✅ CHECKPOINT: Skip if JSON already exists
         if json_path.exists():
+            print(f"      ⏭️  LLM already processed: {base_name}.json")
             llm_skipped += 1
             continue
         
         # Process with LLM if TXT exists
         if txt_path.exists():
             try:
-                with open(txt_path, "r", encoding="utf-8") as f:
+                with open(txt_path, "r", encoding="utf-8", errors="ignore") as f:
                     text = f.read()
                 
-                relevant = llm_utils.extract_relevant_lines(text)
+                # ✅ FIX: Call extract_assets_from_text() directly with RAW text
+                # It will do its own filtering internally
+                llm_data = llm_utils.extract_assets_from_text(text, debug=False)
                 
-                if relevant and relevant.strip():
-                    llm_data = llm_utils.extract_assets_from_text(relevant, debug=False)
-                    
-                    # Save JSON checkpoint
-                    with open(json_path, "w", encoding="utf-8") as f:
-                        json.dump(
-                            {"source": base_name, "assets": llm_data.get("assets", [])}, 
-                            f, 
-                            indent=2
-                        )
+                # Save JSON checkpoint
+                with open(json_path, "w", encoding="utf-8") as f:
+                    json.dump(
+                        {
+                            "source": base_name,
+                            "assets": llm_data.get("assets", [])
+                        },
+                        f,
+                        indent=2
+                    )
+                
+                if llm_data.get("assets"):
                     llm_processed += 1
                 else:
-                    # Still save empty JSON to avoid reprocessing
-                    with open(json_path, "w", encoding="utf-8") as f:
-                        json.dump({"source": base_name, "assets": []}, f, indent=2)
+                    llm_skipped += 1
                     
             except Exception as e:
                 print(f"\n   ❌ LLM Error for {base_name}: {e}")
-    
-    print(f"\n   📊 Processed: {llm_processed} | Skipped: {llm_skipped}\n")
+                # Still save empty JSON to avoid reprocessing
+                with open(json_path, "w", encoding="utf-8") as f:
+                    json.dump({"source": base_name, "assets": []}, f, indent=2)
+                llm_skipped += 1
+
+    print(f"\n   📊 Processed (with assets): {llm_processed} | Empty/Skipped: {llm_skipped}\n")
     
     # =====================================================
     # STEP 6: Flatten & Export to Excel (WITH APPEND MODE)
