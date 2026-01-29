@@ -3,6 +3,7 @@ import os
 from ollama import Client
 from dotenv import load_dotenv
 import config
+import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,6 +16,9 @@ load_dotenv()
 OLLAMA_API_KEY = os.getenv('OLLAMA_API_KEY')
 CLOUD_MODEL = os.getenv('OLLAMA_CLOUD_MODEL', 'gpt-oss:120b')
 LOCAL_MODEL = os.getenv('OLLAMA_LOCAL_MODEL', 'deepseek-r1:8b')
+CLOUD_REQUEST_DELAY = float(os.getenv("CLOUD_REQUEST_DELAY", "0"))
+
+
 
 if not OLLAMA_API_KEY:
     raise ValueError("❌ OLLAMA_API_KEY not found in .env file!")
@@ -68,6 +72,9 @@ def _call_llm(prompt: str, debug=False):
         try:
             if debug:
                 print(f"   📤 Cloud LLM attempt {attempt}/{max_attempts}: {CLOUD_MODEL}")
+
+            if attempt == 1 and CLOUD_REQUEST_DELAY > 0:
+            time.sleep(CLOUD_REQUEST_DELAY)
             
             cloud_client = get_cloud_client()
             
@@ -110,7 +117,10 @@ def _call_llm(prompt: str, debug=False):
         return local_client.chat(
             model=LOCAL_MODEL,
             format="json",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt}],
+            options={
+                "reasoning": "low"  # ✅ Force minimal thinking for faster extraction
+            }
         )
     except Exception as e:
         if debug:
