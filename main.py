@@ -33,8 +33,8 @@ def main():
     layers = fiona.listlayers(config.GPKG_FILE)
     gdf = gpd.read_file(config.GPKG_FILE, layer=layers[0])
     
-    gdf = gdf.head(2) 
-    print(f"   ✅ TEST MODE: Processing {len(gdf)} sites\n")
+    #gdf = gdf.head(2) 
+    #print(f"   ✅ TEST MODE: Processing {len(gdf)} sites\n")
     
 
     # Initialize txt_link column
