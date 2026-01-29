@@ -74,7 +74,7 @@ def _call_llm(prompt: str, debug=False):
                 print(f"   📤 Cloud LLM attempt {attempt}/{max_attempts}: {CLOUD_MODEL}")
 
             if attempt == 1 and CLOUD_REQUEST_DELAY > 0:
-            time.sleep(CLOUD_REQUEST_DELAY)
+                time.sleep(CLOUD_REQUEST_DELAY)
             
             cloud_client = get_cloud_client()
             
