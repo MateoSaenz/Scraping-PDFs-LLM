@@ -22,8 +22,6 @@ SHAREPOINT_BASE_URL = r"C:\Users\m.saenzortiz\OneDrive - ENERGY POOL\Documents\P
 for folder in [PDF_DIR, TXT_DIR, JSON_DIR, DATA_DIR]:
     os.makedirs(folder, exist_ok=True)
 
-# ...existing code...
-
 # --- LLM CONFIGURATION ---
 
 OLLAMA_API_KEY = os.getenv('OLLAMA_API_KEY')
