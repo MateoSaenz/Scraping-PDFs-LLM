@@ -100,7 +100,6 @@ def _call_llm(prompt: str, debug=False):
             
             # Wait before retry (except on last attempt)
             if attempt < max_attempts:
-                import time
                 time.sleep(1)
                 continue
             else:
