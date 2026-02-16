@@ -26,9 +26,15 @@ for folder in [PDF_DIR, TXT_DIR, JSON_DIR, DATA_DIR]:
 
 OLLAMA_API_KEY = os.getenv('OLLAMA_API_KEY')
 OLLAMA_CLOUD_MODEL = os.getenv('OLLAMA_CLOUD_MODEL', 'gpt-oss:120b')
-OLLAMA_LOCAL_MODEL = os.getenv('OLLAMA_LOCAL_MODEL', 'deepseek-r1:8b')
-# --- KEYWORDS ---
+OLLAMA_LOCAL_MODEL = os.getenv('OLLAMA_LOCAL_MODEL', 'gpt-oss:20b')
+# test mistral api
 
+MISTRAL_MODEL = os.getenv('MISTRAL_MODEL', 'codestral-latest')
+MISTRAL_API_KEY = os.getenv('MISTRAL_API_KEY')
+
+
+# --- KEYWORDS ---
+"""
 ASSET_KEYWORDS = [
     # Power Generation
     "furnace","generator", "genset", "diesel generator", "gas generator",
@@ -82,3 +88,51 @@ ASSET_KEYWORDS = [
     "production capacity", "tonnes per day", "tonnes/day",
     "litres", "m3", "nm3",
 ]
+
+"""
+
+ASSET_KEYWORDS = [
+    # Power Generation
+    "furnace", "generator", "genset", "diesel generator", "gas generator",
+    "emergency generator", "backup generator",
+    "turbine", "gas turbine", "steam turbine",
+    "engine", "internal combustion engine", "combustion engine",
+
+    # Electrical
+    "transformer", "power transformer", "distribution transformer",
+    "substation", "switchgear", "circuit breaker",
+    "electrical panel", "electrical installation",
+
+    # Energy Storage
+    "battery", "batteries", "battery system", "battery storage",
+    "energy storage", "bess", "ups", "uninterruptible power supply",
+
+    # Thermal
+    "boiler", "steam boiler", "hot water boiler",
+    "heater", "kiln", "burner", "oven",
+    "glass furnace", "melting furnace",
+
+    # Cooling/HVAC
+    "chiller", "cooling system", "cooling unit", "cooling tower",
+    "heat pump", "hvac", "air conditioning",
+
+    # Fuel/Water Equipment
+    "diesel tank", "fuel tank", "water tank", "electrolyser", "reformer",
+    "natural gas installation", "gas installation",
+
+    # Mechanical
+    "compressor", "air compressor", "pump", "industrial pump",
+    "motor", "electric motor", "fan",
+
+    # Storage / Wells
+    "groundwater well", "extraction well", "storage installation",
+
+    # Grid/Demand
+    "load shedding", "peak shaving",
+    "demand response", "flexibility",
+    "energy management", "ems",
+
+    # Units & capacities
+    "kw", "kva", "mwh", "kwh", "m3", "l", "t/d", "t/day"
+]
+
