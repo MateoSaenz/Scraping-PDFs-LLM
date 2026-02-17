@@ -12,6 +12,7 @@ from pathlib import Path
 import config
 import worker_utils
 import llm_utils
+import mistral_llm_call
 
 def get_pdf_links(url):
     try:
@@ -121,68 +122,93 @@ def main():
     
     print(f"\n  PDF→TXT complete\n")
     
-    
+
 
     # =====================================================
-    # STEP 5: TXT → LLM Asset Extraction (WITH CHECKPOINT)
+    # STEP 5: TXT → LLM Asset Extraction (MISTRAL FIRST)
     # =====================================================
     print("Step 5: LLM Asset Extraction...")
     print(f"Folder Source: {config.TXT_DIR}")
     print(f"Folder Destination: {config.JSON_DIR}\n")
 
-    # SIMPLE: Just scan TXT_DIR directly
     txt_files = list(config.TXT_DIR.glob("*.txt"))
     print(f"Found {len(txt_files)} TXT files\n")
-    
+
     llm_processed = 0
     llm_skipped = 0
 
     for txt_path in tqdm(txt_files, desc="   "):
-        base_name = txt_path.stem  # filename WITHOUT .txt
+        base_name = txt_path.stem
         json_path = config.JSON_DIR / f"{base_name}.json"
-        
-        # CHECKPOINT: Skip if JSON already exists
+
+        # CHECKPOINT
         if json_path.exists():
-            print(f"Already processed: {base_name}.json")
             llm_skipped += 1
             continue
-        
-        # Process TXT → JSON
+
         try:
             with open(txt_path, "r", encoding="utf-8", errors="ignore") as f:
                 text = f.read()
-            
-            # Call LLM
-            llm_data = llm_utils.extract_assets_from_text(text, debug=False)
-            
+
+            # ==============================================
+            # TRY 1️⃣ : MISTRAL FIRST
+            # ==============================================
+            try:
+                print(f"Trying Mistral API for {base_name}")
+                llm_data = mistral_llm_call.extract_assets_from_text(text, debug=False)
+                source_model = "mistral"
+
+            except Exception as e:
+                print(f"   ⚠️ Mistral failed → fallback to Ollama Cloud ({str(e)[:60]})")
+
+                # ==============================================
+                # TRY 2️⃣ : OLLAMA CLOUD
+                # ==============================================
+                try:
+                    llm_data = llm_utils.extract_assets_from_text(text, debug=False)
+                    source_model = "ollama_cloud/local"
+
+                except Exception as e2:
+                    print(f"   ❌ All LLM systems failed: {str(e2)[:60]}")
+                    llm_data = {"assets": []}
+                    source_model = "failed"
+
             # Save JSON checkpoint
             with open(json_path, "w", encoding="utf-8") as f:
                 json.dump(
                     {
                         "source": base_name,
+                        "llm_engine": source_model,
                         "assets": llm_data.get("assets", [])
                     },
                     f,
                     indent=2
                 )
-            
+
             asset_count = len(llm_data.get("assets", []))
+
             if asset_count > 0:
                 llm_processed += 1
-                print(f"      ✅ {base_name}.json ({asset_count} assets)")
+                print(f"      ✅ {base_name}.json ({asset_count} assets | {source_model})")
             else:
                 llm_skipped += 1
-                print(f"{base_name}.json (no assets)")
-                
+                print(f"      ⚪ {base_name}.json (no assets | {source_model})")
+
         except Exception as e:
-            print(f"{base_name}: {str(e)[:50]}")
-            # Save empty JSON to avoid reprocessing
+            print(f"   ❌ {base_name}: {str(e)[:80]}")
             with open(json_path, "w", encoding="utf-8") as f:
-                json.dump({"source": base_name, "assets": []}, f, indent=2)
+                json.dump(
+                    {
+                        "source": base_name,
+                        "llm_engine": "error",
+                        "assets": []
+                    },
+                    f,
+                    indent=2
+                )
             llm_skipped += 1
 
     print(f"\n Processed: {llm_processed} | Skipped: {llm_skipped}\n")
-
 
 
     # =====================================================
@@ -212,7 +238,7 @@ def main():
                         for asset in assets:
                             combined = row.to_dict()
                             combined.update(asset)
-                            final_rows.append(combined)
+                            final_rows.append(combined) 
                     else:
                         # Include row even if no assets
                         combined = row.to_dict()
