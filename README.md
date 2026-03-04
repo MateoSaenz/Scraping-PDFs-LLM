@@ -1,4 +1,9 @@
+To do
+
+I have to add the code mistral in the data pipeline architechture
+
 ## Project Overview
+
 
 This project automates the extraction and analysis of industrial assets from Belgian industrial sites using **PDF scraping, NLP translation, and LLM-based intelligent asset recognition**. It processes unstructured PDF documents (in Dutch) to identify and catalog physical assets like generators, turbines, batteries, and other industrial equipment.
 
