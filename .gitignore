@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
+*.sqlite3
+*.db
+*.env
+.env.*
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# VS Code
+.vscode/
+
+# Data & Output
+/data/
+*.xlsx
+*.csv
+*.json
+*.pdf
+*.gpkg
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Other
+*.bak
+*.tmp
+*.swp
+
+# Ignore Data_stock (output folders)
+Data_stock/
+
+# Ignore OneDrive temp files
+~$*
